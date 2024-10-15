@@ -1,0 +1,42 @@
+name: Create GCP VM
+
+on:
+  workflow_dispatch:  # Allows manual triggering of the workflow
+  push:
+    branches:
+      - main  # or specify any branch
+
+jobs:
+  create-vm:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Step 1: Set up Google Cloud SDK
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+        export_default_credentials: true
+
+    # Step 2: Authenticate with GCP
+    - name: Authenticate GCP
+      run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+
+    # Step 3: Create a GCP VM instance
+    - name: Create VM instance
+      run: |
+        gcloud compute instances create my-demo-vm \
+          --project=${{ secrets.GCP_PROJECT_ID }} \
+          --zone=us-central1-a \
+          --machine-type=e2-medium \
+          --image-family=debian-10 \
+          --image-project=debian-cloud \
+          --boot-disk-size=10GB
+
+    # Optional: Verify the VM creation (e.g., list instances)
+    - name: List VM instances
+      run: gcloud compute instances list --project=${{ secrets.GCP_PROJECT_ID }}
