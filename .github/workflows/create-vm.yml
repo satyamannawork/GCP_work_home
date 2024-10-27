@@ -24,9 +24,9 @@ jobs:
 
     # Step 2: Authenticate with GCP
     - name: Authenticate GCP
-    - uses: 'google-github-actions/auth@v2'
+      uses: google-github-actions/auth@v2
       with:
-        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}' # Replace with the name of your GitHub Actions secret
+        credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }} # Replace with the name of your GitHub Actions secret
       
 
     # Step 3: Create a GCP VM instance
